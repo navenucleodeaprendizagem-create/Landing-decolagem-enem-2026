@@ -198,6 +198,7 @@ box-shadow:0 0 44px rgba(29,155,255,.18);
 display:block;
 width:100%;
 height:auto;
+min-height:220px;
 max-height:680px;
 object-fit:cover;
 background:#02040a;
@@ -447,8 +448,17 @@ h1{font-size:42px}
 <p class="section-lead">O Decolagem ENEM 2026 foi criado para transformar estudo perdido em plano, direção e execução semanal.</p>
 
 <div class="video-box">
-  <video autoplay muted loop playsinline preload="metadata">
-    <source src="./decolagem-enem-2026.mp4" type="video/mp4">
+  <video
+    id="video-decolagem-enem"
+    autoplay
+    muted
+    loop
+    playsinline
+    webkit-playsinline
+    preload="auto"
+    aria-label="Teaser Decolagem ENEM 2026"
+  >
+    <source src="decolagem-enem-2026.mp4?v=2" type="video/mp4">
     Seu navegador não suporta vídeo em HTML5.
   </video>
 </div>
@@ -588,6 +598,33 @@ Copyright © 2026 — Todos os direitos reservados.
 </div>
 </div>
 </footer>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const video = document.getElementById("video-decolagem-enem");
+
+  if (!video) return;
+
+  video.muted = true;
+  video.defaultMuted = true;
+  video.loop = true;
+  video.playsInline = true;
+
+  const iniciarVideo = function () {
+    const tentativa = video.play();
+
+    if (tentativa !== undefined) {
+      tentativa.catch(function () {
+        video.setAttribute("controls", "controls");
+      });
+    }
+  };
+
+  video.addEventListener("canplay", iniciarVideo, { once: true });
+  iniciarVideo();
+});
+</script>
 
 </body>
 </html>
