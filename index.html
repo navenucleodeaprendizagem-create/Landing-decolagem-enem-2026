@@ -200,7 +200,7 @@ width:100%;
 height:auto;
 min-height:220px;
 max-height:680px;
-object-fit:cover;
+object-fit:contain;
 background:#02040a;
 }
 
@@ -457,8 +457,10 @@ h1{font-size:42px}
     webkit-playsinline
     preload="auto"
     aria-label="Teaser Decolagem ENEM 2026"
+    disablepictureinpicture
+    controlslist="nodownload noplaybackrate noremoteplayback"
   >
-    <source src="decolagem-enem-2026.mp4?v=2" type="video/mp4">
+    <source src="./decolagem-enem-2026.mp4" type="video/mp4">
     Seu navegador não suporta vídeo em HTML5.
   </video>
 </div>
@@ -603,25 +605,47 @@ Copyright © 2026 — Todos os direitos reservados.
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const video = document.getElementById("video-decolagem-enem");
-
   if (!video) return;
 
   video.muted = true;
   video.defaultMuted = true;
   video.loop = true;
+  video.autoplay = true;
   video.playsInline = true;
+  video.setAttribute("muted", "");
+  video.setAttribute("autoplay", "");
+  video.setAttribute("loop", "");
+  video.setAttribute("playsinline", "");
+  video.setAttribute("webkit-playsinline", "");
 
   const iniciarVideo = function () {
-    const tentativa = video.play();
-
-    if (tentativa !== undefined) {
-      tentativa.catch(function () {
-        video.setAttribute("controls", "controls");
+    video.load();
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(function () {
+        // Se algum navegador bloquear o autoplay, o vídeo continua carregado.
+        // Como está muted, a maioria dos navegadores permite iniciar automaticamente.
       });
     }
   };
 
-  video.addEventListener("canplay", iniciarVideo, { once: true });
+  video.addEventListener("loadeddata", function () {
+    video.play().catch(function () {});
+  });
+
+  video.addEventListener("error", function () {
+    const box = video.closest(".video-box");
+    if (box && !box.querySelector(".video-fallback")) {
+      const aviso = document.createElement("p");
+      aviso.className = "video-fallback";
+      aviso.style.padding = "24px";
+      aviso.style.margin = "0";
+      aviso.style.color = "#d8e6f5";
+      aviso.innerHTML = 'O vídeo não foi encontrado. Confira se o arquivo <strong>decolagem-enem-2026.mp4</strong> está na mesma pasta do <strong>index.html</strong> no GitHub.';
+      box.appendChild(aviso);
+    }
+  });
+
   iniciarVideo();
 });
 </script>
